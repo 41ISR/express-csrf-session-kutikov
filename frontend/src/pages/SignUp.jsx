@@ -8,7 +8,7 @@ const SignUp = () => {
         }
 
         try {
-            const res = await fetch("https://shiny-broccoli-7r4gg65p9gr2xxr6-3000.app.github.dev/signup", {
+            const res = await fetch("http://localhost:3000/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
