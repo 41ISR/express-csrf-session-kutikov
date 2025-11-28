@@ -24,6 +24,7 @@ const SignUp = () => {
             console.error(error)
         }
     }
+    
     return (
         <div className="container">
 

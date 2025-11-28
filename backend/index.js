@@ -9,12 +9,17 @@ const app = express()
 
 app.use(cookieParser())
 app.use(express.json())
+// app.use(cors({
+// origin: "https://shiny-broccoli-7r4gg65p9gr2xxr6-5173.app.github.dev/",
+// credentials: false,
+// methods: ["GET", "POST", "DELETE", "PUT"],
+// allowedHeaders: ["Content-Type"]
+// }))
 app.use(cors({
-    origin: "https://shiny-broccoli-7r4gg65p9gr2xxr6-5173.app.github.dev/",
-    credentials: false,
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: ["Content-Type"]
-}))
+    origin: (origin, cb) => cb(null, true),
+    credentials: true
+}));
+
 app.use(session({
     secret: "asdasdasdasdasdasd",
     resave: false,
@@ -22,10 +27,26 @@ app.use(session({
     cookie: {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "lax",
-        secure: true
+        sameSite: "none",
+        secure: true,
+        path: "/"
     }
 }))
+
+app.get("/me", (req, res) => {
+    console.log(req.session)
+    if (req.session.userId) {
+        return res.json({
+            loggedIn: true,
+            user: {
+                id: req.session.userId,
+                email: req.session.email
+            }
+        });
+    }
+
+    res.json({ loggedIn: false });
+});
 
 app.post("/signup", (req, res) => {
     try {
@@ -36,7 +57,14 @@ app.post("/signup", (req, res) => {
         const createdUser = db
             .prepare(`SELECT * FROM users WHERE id = ?`)
             .get(newUser.lastInsertRowid);
-        res.status(201).json(createdUser)
+
+        req.session.userId = createdUser.id;
+        req.session.email = createdUser.email;
+
+        res.status(201).json({
+            message: "User registered",
+            user: createdUser
+        });
     } catch (error) {
         console.error(error)
         res.json(error)
