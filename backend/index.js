@@ -7,13 +7,16 @@ const session = require("express-session")
 
 const app = express()
 
+app.set("trust proxy", 1) // ТОЛЬКО ДЛЯ CODESPACES
+
 app.use(cookieParser())
 app.use(express.json())
 app.use(cors({
-    origin: "https://shiny-broccoli-7r4gg65p9gr2xxr6-5173.app.github.dev/",
-    credentials: false,
-    methods: ["GET", "POST", "DELETE", "PUT"],
-    allowedHeaders: ["Content-Type"]
+    origin: true, // ТОЛЬКО ДЛЯ CODESPACES
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["set-cookie"]
 }))
 app.use(session({
     secret: "asdasdasdasdasdasd",
@@ -22,8 +25,10 @@ app.use(session({
     cookie: {
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000,
-        sameSite: "lax",
-        secure: true
+        // sameSite: "strict",
+        sameSite: "none", // ТОЛЬКО ДЛЯ CODESPACES
+        secure: true, // false если localhost
+        domain: undefined // ТОЛЬКО ДЛЯ CODESPACES
     }
 }))
 
@@ -36,6 +41,10 @@ app.post("/signup", (req, res) => {
         const createdUser = db
             .prepare(`SELECT * FROM users WHERE id = ?`)
             .get(newUser.lastInsertRowid);
+
+        req.session.userId = createdUser.id
+        req.session.email = createdUser.email
+
         res.status(201).json(createdUser)
     } catch (error) {
         console.error(error)
