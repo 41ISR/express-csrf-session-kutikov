@@ -1,4 +1,10 @@
+import { useState } from "react"
+
 const Index = () => {
+    const [clicks, setClicks] = useState(0)
+    const handleClick = () => {
+        setClicks((val) => val + 1)
+    }
     return (
         <div className="container">
 
@@ -13,8 +19,8 @@ const Index = () => {
 
                 <div className="click-counter">
                     <h2>Твои клики</h2>
-                    <div className="clicks-display">42</div>
-                    <button className="click-button">👆 КЛИКНИ!</button>
+                    <div className="clicks-display">{clicks}</div>
+                    <button className="click-button" onClick={handleClick}>👆 КЛИКНИ!</button>
                 </div>
 
                 <div className="leaderboard">

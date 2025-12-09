@@ -1,4 +1,7 @@
+import {useNavigate} from "react-router-dom"
+
 const SignUp = () => {
+    const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault()
         
@@ -8,7 +11,7 @@ const SignUp = () => {
         }
 
         try {
-            const res = await fetch("https://shiny-broccoli-7r4gg65p9gr2xxr6-3000.app.github.dev/signup", {
+            const res = await fetch("https://shiny-broccoli-7r4gg65p9gr2xxr6-3000.app.github.dev/auth/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -20,6 +23,7 @@ const SignUp = () => {
             if (!res.ok) throw new Error(res.statusText)
 
             console.log(res)
+            navigate("/")
         } catch (error) {
             console.error(error)
         }
