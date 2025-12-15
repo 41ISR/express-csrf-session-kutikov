@@ -1,10 +1,17 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const Index = () => {
+    const navigate = useNavigate()
     const [clicks, setClicks] = useState(0)
     const handleClick = () => {
         setClicks((val) => val + 1)
     }
+
+    const handleLogout = () => {
+        navigate("/logout")
+    }
+    
     return (
         <div className="container">
 
@@ -12,7 +19,7 @@ const Index = () => {
                 <h1>🎮 Кликер Игра</h1>
                 <div className="user-info">
                     <span><strong>Имя пользователя</strong></span>
-                    <button className="logout-btn">Выйти</button>
+                    <button onClick={handleLogout} className="logout-btn">Выйти</button>
                 </div>
             </div>
             <div className="game-area">
