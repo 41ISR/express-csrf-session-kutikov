@@ -94,9 +94,15 @@ app.post("/auth/logout", (req, res) => {
     })
 })
 
-// 1. Кинуть юзера на /logout
-// 2. Там в useEffect сделать запрос на /auth/logout и очистить
-// user в authStore
+app.post("/click", (req, res) => {
+    const { clicks } = req.body
+    const updateClicks = db
+        .prepare("UPDATE users SET clicks = ? WHERE id = ?")
+        .run(clicks, req.session.userId)
+
+    console.log(updateClicks)
+    res.status(200).json({message: "Значение кликов обновлено"})
+})
 
 app.listen("3000", () => {
     console.log("Порт3000")
